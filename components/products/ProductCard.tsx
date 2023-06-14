@@ -1,4 +1,5 @@
 import { FC, useMemo, useState } from 'react';
+import NextLink from 'next/link';
 import {
   Box,
   Card,
@@ -18,9 +19,9 @@ export const ProductCard: FC<Props> = ({ product }) => {
 
   const productImage = useMemo(() => {
     return isHovered
-      ? `products/${product.images[1]}`
-      : `products/${product.images[0]}`;
-  }, [isHovered]);
+      ? `/products/${product.images[1]}`
+      : `/products/${product.images[0]}`;
+  }, [isHovered, product.images]);
 
   return (
     <>
@@ -28,14 +29,16 @@ export const ProductCard: FC<Props> = ({ product }) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <CardActionArea>
-          <CardMedia
-            component='img'
-            image={productImage}
-            alt={product.title}
-            className='fadeIn'
-          />
-        </CardActionArea>
+        <NextLink href='/product/slug' prefetch={false}>
+          <CardActionArea>
+            <CardMedia
+              component='img'
+              image={productImage}
+              alt={product.title}
+              className='fadeIn'
+            />
+          </CardActionArea>
+        </NextLink>
       </Card>
 
       <Box sx={{ mt: 1 }} className='fadeIn'>
