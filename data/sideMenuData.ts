@@ -16,6 +16,7 @@ interface General {
   title: string;
   IconComponent: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>;
   sxOptions?: SxProps<Theme>;
+  url: string;
 }
 
 interface SideMenuData {
@@ -28,53 +29,63 @@ export const sideMenuData: SideMenuData = {
     {
       title: 'Perfil',
       IconComponent: AccountCircleOutlined,
+      url: '/'
     },
     {
       title: 'Mis Ordenes',
       IconComponent: ConfirmationNumberOutlined,
+      url: '/'
     },
     {
       title: 'Hombres',
       IconComponent: MaleOutlined,
       sxOptions: {
         display: { xs: '', sm: 'none' }
-      }
+      },
+      url: '/category/men'
     },
     {
       title: 'Mujeres',
       IconComponent: FemaleOutlined,
       sxOptions: {
         display: { xs: '', sm: 'none' }
-      }
+      },
+      url: '/category/women'
     },
     {
       title: 'Niños',
       IconComponent: EscalatorWarningOutlined,
       sxOptions: {
         display: { xs: '', sm: 'none' }
-      }
+      },
+      url: '/category/kids'
     },
     {
       title: 'Ingresar',
       IconComponent: VpnKeyOutlined,
+      url: '/auth/login'
     },
     {
       title: 'Salir',
       IconComponent: LoginOutlined,
+      url: '/'
     },
   ],
   adminPanel: [
     {
       title: 'Productos',
       IconComponent: CategoryOutlined,
+      url: '/products'
     },
     {
       title: 'Ordenes',
       IconComponent: ConfirmationNumberOutlined,
+      url: '/orders/history'
     },
     {
       title: 'Usuarios',
       IconComponent: AdminPanelSettings,
+      url: ''
     },
   ],
 };

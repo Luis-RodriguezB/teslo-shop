@@ -71,3 +71,7 @@ a {
   background-position: center;
   height: 650px;
 }
+
+.navLink {
+  margin: 0 5px;
+}

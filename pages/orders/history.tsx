@@ -6,7 +6,6 @@ import {
   GridColDef,
   GridRowsProp,
   GridRenderCellParams,
-  GridValueGetterParams
 } from '@mui/x-data-grid';
 import { OrderState } from '@/components/ui';
 
@@ -63,10 +62,20 @@ const columns: GridColDef[] = [
 ];
 
 const rows: GridRowsProp = [
-  { id: 1, paid: false, fullName: 'Luis Rodriguez', datePurchase: new Date()},
-  { id: 2, paid: true, fullName: 'Enrique Baltodano', datePurchase: new Date()},
-  { id: 3, paid: false, fullName: 'Luis Baltodano', datePurchase: new Date()},
-  { id: 4, paid: true, fullName: 'Enrique Rodriguez', datePurchase: new Date()},
+  { id: 1, paid: false, fullName: 'Luis Rodriguez', datePurchase: new Date() },
+  {
+    id: 2,
+    paid: true,
+    fullName: 'Enrique Baltodano',
+    datePurchase: new Date(),
+  },
+  { id: 3, paid: false, fullName: 'Luis Baltodano', datePurchase: new Date() },
+  {
+    id: 4,
+    paid: true,
+    fullName: 'Enrique Rodriguez',
+    datePurchase: new Date(),
+  },
 ];
 
 const HistoryPage = () => {

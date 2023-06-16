@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import NextLink from 'next/link';
 import {
   AppBar,
@@ -10,8 +11,17 @@ import {
   Typography,
 } from '@mui/material';
 import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
+import { useRouter } from 'next/router';
+import { UiContext } from '@/context';
 
 export const Navbar = () => {
+  const { asPath } = useRouter();
+  const { toggleSideMenu } = useContext(UiContext);
+
+  const isActiveLink = (route: string) => {
+    return asPath === route ? 'primary' : 'info';
+  };
+
   return (
     <AppBar>
       <Toolbar>
@@ -31,19 +41,19 @@ export const Navbar = () => {
         <Box flex={1} />
 
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-          <NextLink href='/category/men'>
+          <NextLink href='/category/men' className='navLink'>
             <Link component='span'>
-              <Button>Hombres</Button>
+              <Button color={isActiveLink('/category/men')}>Hombres</Button>
             </Link>
           </NextLink>
-          <NextLink href='/category/women'>
+          <NextLink href='/category/women' className='navLink'>
             <Link component='span'>
-              <Button>Mujeres</Button>
+              <Button color={isActiveLink('/category/women')}>Mujeres</Button>
             </Link>
           </NextLink>
-          <NextLink href='/category/kids'>
+          <NextLink href='/category/kids' className='navLink'>
             <Link component='span'>
-              <Button>Niños</Button>
+              <Button color={isActiveLink('/category/kids')}>Niños</Button>
             </Link>
           </NextLink>
         </Box>
@@ -62,7 +72,7 @@ export const Navbar = () => {
           </IconButton>
         </NextLink>
 
-        <Button>Menú</Button>
+        <Button onClick={toggleSideMenu} >Menú</Button>
       </Toolbar>
     </AppBar>
   );
