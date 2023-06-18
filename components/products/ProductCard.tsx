@@ -30,7 +30,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <NextLink href='/product/slug' prefetch={false}>
+        <NextLink href={`/product/${product.slug}`} prefetch={false}>
           <CardActionArea>
             <CardMedia
               component='img'

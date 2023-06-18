@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import {
   Box,
@@ -22,9 +22,17 @@ export const SideMenu = () => {
   const route = useRouter();
   const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
   const { general, adminPanel } = sideMenuData;
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const onSearchTerm = () => {
+    if (searchTerm.trim().length === 0) return;
+
+    navigateTo(`/search/${searchTerm}`);
+  };
 
   const navigateTo = (url: string) => {
-    route.push(url);
+    toggleSideMenu();
+    route.replace(url);
   };
 
   return (
@@ -38,6 +46,10 @@ export const SideMenu = () => {
         <List>
           <ListItem>
             <Input
+              autoFocus
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyUp={(e) => e.key === 'Enter' && onSearchTerm()}
               type='text'
               placeholder='Buscar...'
               endAdornment={
