@@ -1,23 +1,33 @@
-import { ShopLayout } from '@/components/layouts';
+import { useContext } from 'react';
 import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
+import { dbProducts } from '@/database';
+
+import { ShopLayout } from '@/components/layouts';
+import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 import { ProductSlideshow, SizeSelector } from '@/components/products';
 import { ItemCounter } from '@/components/ui';
-import { getNumberFormat } from '@/utils';
-import { dbProducts } from '@/database';
+
 import { IProduct, ProductSlug } from '@/interfaces';
+import { getNumberFormat } from '@/utils';
+import { CartContext } from '@/context';
+import { useProductCart } from '@/hooks';
 
 interface Props {
   product: IProduct;
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
-  // const { query } = useRouter();
-  // const { products } = useProducts(`/products/${query.slug}`);
+  const router = useRouter();
+  const { addProductToCart } = useContext(CartContext);
+  const { tempCartProduct, onSelectedSize, onUpdateQuantity } = useProductCart(product);
 
-  if (!product) {
-    return <h1>Hola</h1>;
-  }
+  const onAddProduct = () => {
+    if (!tempCartProduct.size) return;
+
+    addProductToCart(tempCartProduct);
+    router.push('/cart');
+  };
 
   return (
     <ShopLayout title='Teslo-Shop - Producto' pageDescription=''>
@@ -43,17 +53,39 @@ const ProductPage: NextPage<Props> = ({ product }) => {
             {/** Cantidad */}
             <Box sx={{ my: 2 }}>
               <Typography variant='subtitle2'>Cantidad</Typography>
-              <ItemCounter />
+
+              <ItemCounter
+                inStock={product.inStock}
+                currentQuantity={tempCartProduct.quantity}
+                updatedQuantity={onUpdateQuantity}
+              />
+
               <SizeSelector
-                selectedSize={product.sizes[1]}
                 sizes={product.sizes}
+                selectedSize={tempCartProduct.size}
+                onSelectedSize={onSelectedSize}
               />
             </Box>
 
             {/** Agregar al carrito */}
-            <Button color='secondary' className='circular-btn'>
-              Agregar al carrito
-            </Button>
+
+            {product.inStock > 0 ? (
+              <Button
+                color='secondary'
+                className='circular-btn'
+                onClick={onAddProduct}
+              >
+                {tempCartProduct.size
+                  ? 'Agregar al carrito'
+                  : 'Seleccione una talla'}
+              </Button>
+            ) : (
+              <Chip
+                label='No hay disponibles'
+                color='error'
+                variant='outlined'
+              />
+            )}
 
             {/* <Chip label='No hay disponibles' color='error' variant='outlined' /> */}
 
@@ -96,7 +128,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       product,
     },
-    revalidate: 86400
+    revalidate: 86400,
   };
 };
 
