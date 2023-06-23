@@ -1,6 +1,6 @@
-import { ICartProduct } from '@/interfaces';
+import { ICartProduct, IOrderSummary } from '@/interfaces';
 
-export interface ICartContext {
+export interface ICartContext extends IOrderSummary {
   cart: ICartProduct[];
 
   addProductToCart: (product: ICartProduct) => void;
@@ -8,6 +8,6 @@ export interface ICartContext {
   deleteProductInCart: (product: ICartProduct) => void;
 }
 
-export interface CartState {
+export interface CartState extends IOrderSummary {
   cart: ICartProduct[];
 }

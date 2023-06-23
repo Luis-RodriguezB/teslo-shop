@@ -6,13 +6,13 @@ interface Props {
 }
 
 export const CartProvider: FC<Props> = ({ children }) => {
-  const { cartState, ...methods } = useCartProvider();
+  const { state, ...methods } = useCartProvider();
 
   return (
     <>
       <CartContext.Provider
         value={{
-          ...cartState,
+          ...state,
           ...methods,
         }}
       >

@@ -5,10 +5,14 @@ import { ICartProduct } from '@/interfaces';
 
 const CART_INITIAL_STATE: CartState = {
   cart: [],
+  numberOfItems: 0,
+  subTotal: 0,
+  tax: 0,
+  total: 0,
 };
 
 export const useCartProvider = () => {
-  const [cartState, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
+  const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
   const firstTimeLoad = useRef(true);
 
   useEffect(() => {
@@ -18,8 +22,25 @@ export const useCartProvider = () => {
   useEffect(() => {
     if (firstTimeLoad.current) return;
 
-    Cookie.set('cart', JSON.stringify(cartState.cart));
-  }, [cartState.cart]);
+    Cookie.set('cart', JSON.stringify(state.cart));
+  }, [state.cart]);
+
+  useEffect(() => {
+    if(firstTimeLoad.current) return;
+
+    const numberOfItems = state.cart.reduce((prev, current) => current.quantity + prev, 0);
+    const subTotal = state.cart.reduce((prev, current) => (current.price * current.quantity) + prev, 0);
+    const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
+
+    const orderSummary = {
+      numberOfItems,
+      subTotal,
+      tax: subTotal * taxRate,
+      total: subTotal * (taxRate + 1)
+    }
+
+    dispatch({type: '[Cart] - Update Order Summary', payload: orderSummary});
+  }, [state.cart]);
 
   const loadCookies = async () => {
     try {
@@ -41,17 +62,17 @@ export const useCartProvider = () => {
   };
 
   const addProductToCart = (product: ICartProduct) => {
-    const productInCart = cartState.cart.find(
+    const productInCart = state.cart.find(
       (p) => p._id === product._id && p.size === product.size
     );
     if (!productInCart) {
       return dispatch({
         type: '[Cart] - Update Products In Cart',
-        payload: [...cartState.cart, product],
+        payload: [...state.cart, product],
       });
     }
 
-    const updatedProducts = cartState.cart.map((p) => {
+    const updatedProducts = state.cart.map((p) => {
       if (p._id !== product._id || p.size !== product.size) return p;
 
       p.quantity += product.quantity;
@@ -79,7 +100,7 @@ export const useCartProvider = () => {
   };
 
   return {
-    cartState,
+    state,
 
     //methods
     addProductToCart,

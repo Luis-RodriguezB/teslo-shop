@@ -13,7 +13,7 @@ import { CartList, OrderSummary } from '@/components/cart';
 const CartPage = () => {
   return (
     <ShopLayout
-      title='Carrito - '
+      title='Teslo-Shop - Carrito de compras'
       pageDescription='Carrito de compras de la tienda'
     >
       <Typography variant='h1' component='h1'>

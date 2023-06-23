@@ -1,11 +1,12 @@
-import { ICartProduct } from '@/interfaces';
+import { ICartProduct, IOrderSummary } from '@/interfaces';
 import { CartState } from './';
 
 type Action =
   | { type: '[Cart] - LoadCart From Cookies | Storage'; payload: ICartProduct[]; }
   | { type: '[Cart] - Update Products In Cart'; payload: ICartProduct[] }
   | { type: '[Cart] - Change Cart Quantity'; payload: ICartProduct }
-  | { type: '[Cart] - Delete Product In Cart'; payload: ICartProduct };
+  | { type: '[Cart] - Delete Product In Cart'; payload: ICartProduct }
+  | { type: '[Cart] - Update Order Summary'; payload: IOrderSummary };
 
 export const cartReducer = (state: CartState, { type, payload }: Action) => {
   switch (type) {
@@ -33,6 +34,11 @@ export const cartReducer = (state: CartState, { type, payload }: Action) => {
       return {
         ...state,
         cart: state.cart.filter(p => !(p._id === payload._id && p.size === payload.size)),
+      }
+    case '[Cart] - Update Order Summary':
+      return {
+        ...state,
+        ...payload
       }
     default:
       return state;
