@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import NextLink from 'next/link';
 import {
   Box,
@@ -11,28 +11,24 @@ import {
 import { ItemCounter } from '../ui';
 import { getNumberFormat } from '@/utils';
 
-import { initialData } from '@/database/products';
-
-const productsInCart = [
-  initialData.products[0],
-  initialData.products[1],
-  initialData.products[2],
-];
+import { CartContext } from '@/context';
 
 interface Props {
   editable?: boolean;
 }
 
 export const CartList: FC<Props> = ({ editable = false }) => {
+  const { cart } = useContext(CartContext);
+
   return (
     <>
-      {productsInCart.map((product) => (
+      {cart.map((product) => (
         <Grid container padding={2} key={product.slug} sx={{ mb: 1 }}>
           <Grid item xs={3}>
             <NextLink href='/product/slug'>
               <CardActionArea>
                 <CardMedia
-                  image={`/products/${product.images[0]}`}
+                  image={`/products/${product.image}`}
                   component='img'
                   sx={{ borderRadius: '5px' }}
                 />
@@ -44,11 +40,11 @@ export const CartList: FC<Props> = ({ editable = false }) => {
             <Box display='flex' flexDirection='column'>
               <Typography variant='body1'>{product.title}</Typography>
               <Typography variant='body1'>
-                Talla: <strong>M</strong>
+                Talla: <strong>{product.size}</strong>
               </Typography>
 
               {editable ? (
-                <ItemCounter />
+                <ItemCounter inStock={10} currentQuantity={product.quantity} updatedQuantity={() => console.log('first')} />
               ) : (
                 <Typography variant='h6'>3 items</Typography>
               )}
