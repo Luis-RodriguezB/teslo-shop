@@ -1,5 +1,6 @@
 import { FC, useContext } from 'react';
 import NextLink from 'next/link';
+import { CartContext } from '@/context';
 import {
   Box,
   Button,
@@ -9,23 +10,34 @@ import {
   Typography,
 } from '@mui/material';
 import { ItemCounter } from '../ui';
-import { getNumberFormat } from '@/utils';
 
-import { CartContext } from '@/context';
+import { getNumberFormat } from '@/utils';
+import { ICartProduct } from '@/interfaces';
 
 interface Props {
   editable?: boolean;
 }
 
 export const CartList: FC<Props> = ({ editable = false }) => {
-  const { cart } = useContext(CartContext);
+  const { cart, updateCartQuantity } = useContext(CartContext);
+
+  const onNewCartQuantityValue = (product: ICartProduct, value: number) => {
+    product.quantity = value;
+
+    updateCartQuantity(product);
+  };
 
   return (
     <>
       {cart.map((product) => (
-        <Grid container padding={2} key={product.slug} sx={{ mb: 1 }}>
+        <Grid
+          container
+          padding={2}
+          key={`${product.slug}__${product.size}`}
+          sx={{ mb: 1 }}
+        >
           <Grid item xs={3}>
-            <NextLink href='/product/slug'>
+            <NextLink href={`/product/${product.slug}`}>
               <CardActionArea>
                 <CardMedia
                   image={`/products/${product.image}`}
@@ -44,9 +56,18 @@ export const CartList: FC<Props> = ({ editable = false }) => {
               </Typography>
 
               {editable ? (
-                <ItemCounter inStock={10} currentQuantity={product.quantity} updatedQuantity={() => console.log('first')} />
+                <ItemCounter
+                  inStock={10}
+                  currentQuantity={product.quantity}
+                  updatedQuantity={(value) =>
+                    onNewCartQuantityValue(product, value)
+                  }
+                />
               ) : (
-                <Typography variant='h6'>3 items</Typography>
+                <Typography variant='h6'>
+                  {product.quantity}
+                  {product.quantity === 1 ? 'producto' : 'productos'}
+                </Typography>
               )}
             </Box>
           </Grid>

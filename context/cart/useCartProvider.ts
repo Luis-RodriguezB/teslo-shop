@@ -46,7 +46,7 @@ export const useCartProvider = () => {
     );
     if (!productInCart) {
       return dispatch({
-        type: '[Cart] - Updtate products in cart',
+        type: '[Cart] - Update Products In Cart',
         payload: [...cartState.cart, product],
       });
     }
@@ -59,8 +59,15 @@ export const useCartProvider = () => {
     });
 
     dispatch({
-      type: '[Cart] - Updtate products in cart',
+      type: '[Cart] - Update Products In Cart',
       payload: updatedProducts,
+    });
+  };
+
+  const updateCartQuantity = (product: ICartProduct) => {
+    dispatch({
+      type: '[Cart] - Change Cart Quantity',
+      payload: product,
     });
   };
 
@@ -69,5 +76,6 @@ export const useCartProvider = () => {
 
     //methods
     addProductToCart,
+    updateCartQuantity,
   };
 };
