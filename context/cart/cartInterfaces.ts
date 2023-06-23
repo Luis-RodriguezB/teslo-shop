@@ -5,6 +5,7 @@ export interface ICartContext {
 
   addProductToCart: (product: ICartProduct) => void;
   updateCartQuantity: (product: ICartProduct) => void;
+  deleteProductInCart: (product: ICartProduct) => void;
 }
 
 export interface CartState {

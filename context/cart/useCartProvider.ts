@@ -71,11 +71,19 @@ export const useCartProvider = () => {
     });
   };
 
+  const deleteProductInCart = (product: ICartProduct) => {
+    dispatch({
+      type: '[Cart] - Delete Product In Cart',
+      payload: product,
+    });
+  };
+
   return {
     cartState,
 
     //methods
     addProductToCart,
     updateCartQuantity,
+    deleteProductInCart,
   };
 };
