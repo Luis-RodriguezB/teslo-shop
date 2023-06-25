@@ -24,14 +24,14 @@ const checkJWT = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   let userId = '';
 
   try {
-    try {
-      userId = await jwt.isValidToken(token);
-    } catch (error) {
-      return res.status(401).json({
-        message: 'Token de autorización no es válido',
-      });
-    }
+    userId = await jwt.isValidToken(token);
+  } catch (error) {
+    return res.status(401).json({
+      message: 'Token de autorización no es válido',
+    });
+  }
 
+  try {
     await db.connect();
     const user = await User.findById(userId).lean();
 

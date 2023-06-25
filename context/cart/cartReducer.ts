@@ -8,7 +8,7 @@ type Action =
   | { type: '[Cart] - Delete Product In Cart'; payload: ICartProduct }
   | { type: '[Cart] - Update Order Summary'; payload: IOrderSummary };
 
-export const cartReducer = (state: CartState, { type, payload }: Action) => {
+export const cartReducer = (state: CartState, { type, payload }: Action): CartState => {
   switch (type) {
     case '[Cart] - LoadCart From Cookies | Storage':
       return {

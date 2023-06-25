@@ -19,3 +19,8 @@ export interface UserResponse {
   email: string;
   role: string;
 }
+
+export interface AuthResponse {
+  token: string;
+  user: UserResponse;
+}

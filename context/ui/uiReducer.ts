@@ -2,7 +2,7 @@ import { UiState } from './';
 
 type Action = { type: '[UI] ToggleMenu' };
 
-export const uiReducer = (state: UiState, action: Action) => {
+export const uiReducer = (state: UiState, action: Action): UiState => {
   console.log(action);
   switch (action.type) {
     case '[UI] ToggleMenu':
