@@ -13,6 +13,7 @@ export const cartReducer = (state: CartState, { type, payload }: Action): CartSt
     case '[Cart] - LoadCart From Cookies | Storage':
       return {
         ...state,
+        isLoaded: true,
         cart: [...payload],
       };
     case '[Cart] - Update Products In Cart':

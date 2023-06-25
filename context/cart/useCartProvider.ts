@@ -9,6 +9,7 @@ const CART_INITIAL_STATE: CartState = {
   subTotal: 0,
   tax: 0,
   total: 0,
+  isLoaded: false,
 };
 
 export const useCartProvider = () => {

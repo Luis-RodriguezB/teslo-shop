@@ -1,10 +1,11 @@
 import { Box } from '@mui/material';
+import { ErrorProps } from 'next/error';
 import Head from 'next/head';
 import { FC } from 'react';
 
 interface Props {
   title: string;
-  children: React.JSX.Element | React.JSX.Element[];
+  children: false | React.JSX.Element | React.JSX.Element[];
 }
 
 export const AuthLayout: FC<Props> = ({ title, children }) => {

@@ -2,37 +2,29 @@ import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import {
   Box,
-  Divider,
   Drawer,
   IconButton,
   Input,
   InputAdornment,
   List,
   ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListSubheader,
-  ListItemButton,
 } from '@mui/material';
+import { PublicMenuOption } from './PublicMenuOption';
+import { PrivateMenuOption } from './PrivateMenuOption';
 import { SearchOutlined } from '@mui/icons-material';
 import { UiContext } from '@/context';
-import { sideMenuData } from '@/data';
+
 
 export const SideMenu = () => {
   const route = useRouter();
   const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
-  const { general, adminPanel } = sideMenuData;
   const [searchTerm, setSearchTerm] = useState('');
 
   const onSearchTerm = () => {
     if (searchTerm.trim().length === 0) return;
 
-    navigateTo(`/search/${searchTerm}`);
-  };
-
-  const navigateTo = (url: string) => {
     toggleSideMenu();
-    route.replace(url);
+    route.replace(`/search/${searchTerm}`);
   };
 
   return (
@@ -62,31 +54,9 @@ export const SideMenu = () => {
             />
           </ListItem>
 
-          {general.map(({ title, IconComponent, sxOptions, url }) => (
-            <ListItemButton
-              key={title}
-              sx={sxOptions && sxOptions}
-              onClick={() => navigateTo(url)}
-            >
-              <ListItemIcon>
-                <IconComponent />
-              </ListItemIcon>
-              <ListItemText primary={title} />
-            </ListItemButton>
-          ))}
+          <PublicMenuOption />
 
-          {/* Admin */}
-          <Divider />
-          <ListSubheader>Admin Panel</ListSubheader>
-
-          {adminPanel.map(({ title, IconComponent, url }) => (
-            <ListItemButton key={title} onClick={() => navigateTo(url)}>
-              <ListItemIcon>
-                <IconComponent />
-              </ListItemIcon>
-              <ListItemText primary={title} />
-            </ListItemButton>
-          ))}
+          <PrivateMenuOption />
         </List>
       </Box>
     </Drawer>

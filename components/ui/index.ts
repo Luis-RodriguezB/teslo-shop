@@ -2,4 +2,4 @@ export * from './FullScreenLoading';
 export * from './ItemCounter';
 export * from './Navbar';
 export * from './OrderState';
-export * from './SideMenu';
+export * from './SideMenu/SideMenu';

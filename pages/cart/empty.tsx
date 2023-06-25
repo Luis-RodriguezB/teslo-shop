@@ -6,7 +6,7 @@ import NextLink from 'next/link';
 const EmptyPage = () => {
   return (
     <ShopLayout
-      title='Carrito Vació'
+      title='Carrito Vacio'
       pageDescription='No hay artículos en el carrito de compras'
     >
       <Box
