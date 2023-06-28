@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { ShopLayout } from '@/components/layouts';
 import {
@@ -12,10 +12,17 @@ import {
 } from '@mui/material';
 import { CartList, OrderSummary } from '@/components/cart';
 import { CartContext } from '@/context';
+import Link from 'next/link';
 
 const CartPage = () => {
   const { isLoaded, cart } = useContext(CartContext);
   const router = useRouter();
+  const showCartContent = useMemo(
+    () => isLoaded && cart.length > 0,
+    [isLoaded, cart]
+  );
+
+  console.log(router);
 
   useEffect(() => {
     if (isLoaded && cart.length === 0) {
@@ -29,7 +36,7 @@ const CartPage = () => {
       pageDescription='Carrito de compras de la tienda'
     >
       <>
-        {!isLoaded || cart.length === 0 && (
+        {showCartContent && (
           <>
             <Typography variant='h1' component='h1'>
               Carrito
@@ -53,6 +60,11 @@ const CartPage = () => {
                         color='secondary'
                         className='circular-btn'
                         fullWidth
+                        href={
+                          router.query.p
+                            ? router.query.p.toString()
+                            : '/checkout/address'
+                        }
                       >
                         Checkout
                       </Button>

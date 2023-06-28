@@ -22,7 +22,7 @@ export const OrderSummary = () => {
 
       <OrderSummaryItem
         title='Impuestos (13%)'
-        amount={getNumberFormat(subTotal, {
+        amount={getNumberFormat(tax, {
           format: 'en',
           style: 'currency',
           currency: 'USD',

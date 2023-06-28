@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useRef } from 'react';
-import Cookie from 'js-cookie';
+import Cookies from 'js-cookie';
 import { CartState, cartReducer } from './';
-import { ICartProduct } from '@/interfaces';
+import { ICartProduct, IShippingAddress } from '@/interfaces';
 
 const CART_INITIAL_STATE: CartState = {
   cart: [],
@@ -10,6 +10,7 @@ const CART_INITIAL_STATE: CartState = {
   tax: 0,
   total: 0,
   isLoaded: false,
+  shippingAddress: undefined,
 };
 
 export const useCartProvider = () => {
@@ -23,30 +24,40 @@ export const useCartProvider = () => {
   useEffect(() => {
     if (firstTimeLoad.current) return;
 
-    Cookie.set('cart', JSON.stringify(state.cart));
+    Cookies.set('cart', JSON.stringify(state.cart));
   }, [state.cart]);
 
   useEffect(() => {
-    if(firstTimeLoad.current) return;
+    if (firstTimeLoad.current) return;
 
-    const numberOfItems = state.cart.reduce((prev, current) => current.quantity + prev, 0);
-    const subTotal = state.cart.reduce((prev, current) => (current.price * current.quantity) + prev, 0);
+    const numberOfItems = state.cart.reduce(
+      (prev, current) => current.quantity + prev,
+      0
+    );
+    const subTotal = state.cart.reduce(
+      (prev, current) => current.price * current.quantity + prev,
+      0
+    );
     const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
 
     const orderSummary = {
       numberOfItems,
       subTotal,
       tax: subTotal * taxRate,
-      total: subTotal * (taxRate + 1)
-    }
+      total: subTotal * (taxRate + 1),
+    };
 
-    dispatch({type: '[Cart] - Update Order Summary', payload: orderSummary});
+    dispatch({ type: '[Cart] - Update Order Summary', payload: orderSummary });
   }, [state.cart]);
+
+  useEffect(() => {
+    loadShippingAddress();
+  }, []);
 
   const loadCookies = async () => {
     try {
-      const cookieProducts = Cookie.get('cart')
-        ? JSON.parse(Cookie.get('cart')!)
+      const cookieProducts = Cookies.get('cart')
+        ? JSON.parse(Cookies.get('cart')!)
         : [];
       await dispatch({
         type: '[Cart] - LoadCart From Cookies | Storage',
@@ -59,6 +70,26 @@ export const useCartProvider = () => {
       });
     } finally {
       firstTimeLoad.current = false;
+    }
+  };
+
+  const loadShippingAddress = () => {
+    if (Cookies.get('name')) {
+      const shippingAddress: IShippingAddress = {
+        name: Cookies.get('name') || '',
+        lastName: Cookies.get('lastName') || '',
+        address: Cookies.get('address') || '',
+        address2: Cookies.get('address2') || '',
+        zipcode: Cookies.get('zipcode') || '',
+        city: Cookies.get('city') || '',
+        country: Cookies.get('country') || '',
+        phone: Cookies.get('phone') || '',
+      };
+
+      dispatch({
+        type: '[Cart] - LoadAddress From Cookies',
+        payload: shippingAddress,
+      });
     }
   };
 
@@ -100,6 +131,17 @@ export const useCartProvider = () => {
     });
   };
 
+  const updateAddress = (address: IShippingAddress) => {
+    for (const key in address) {
+      Cookies.set(key, (address as any)[key] || '');
+    }
+
+    dispatch({
+      type: '[Cart] - Update Address',
+      payload: address,
+    });
+  };
+
   return {
     state,
 
@@ -107,5 +149,6 @@ export const useCartProvider = () => {
     addProductToCart,
     updateCartQuantity,
     deleteProductInCart,
+    updateAddress
   };
 };

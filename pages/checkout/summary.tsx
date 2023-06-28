@@ -1,4 +1,6 @@
+import { useContext } from 'react';
 import NextLink from 'next/link';
+import { CartContext } from '@/context';
 import { ShopLayout } from '@/components/layouts';
 import {
   Box,
@@ -11,8 +13,11 @@ import {
   Typography,
 } from '@mui/material';
 import { CartList, OrderSummary } from '@/components/cart';
+import { getCountryNameByCode } from '@/utils';
 
 const SummaryPage = () => {
+  const { shippingAddress } = useContext(CartContext);
+
   return (
     <ShopLayout title='Resumen de orden' pageDescription='Resumen de la orden'>
       <Typography variant='h1' component='h1'>
@@ -41,15 +46,20 @@ const SummaryPage = () => {
                 </NextLink>
               </Box>
 
-              <Typography>Luis Rodriguez</Typography>
-              <Typography>322 Algun lugar</Typography>
-              <Typography>Liberia, Guanacaste</Typography>
-              <Typography>Costa Rica</Typography>
+              <Typography>{`${shippingAddress?.name} ${shippingAddress?.lastName}`}</Typography>
+              <Typography>
+                {shippingAddress?.zipcode}, {shippingAddress?.city},{' '}
+                {getCountryNameByCode(shippingAddress?.country || '')}
+              </Typography>
+              <Typography>{getCountryNameByCode(shippingAddress?.country || '')}</Typography>
+              <Typography>{shippingAddress?.address}</Typography>
+              <Typography>{shippingAddress?.address2 || ''}</Typography>
+              <Typography>{shippingAddress?.phone}</Typography>
 
               <Divider sx={{ my: 1 }} />
 
               <Box display='flex' justifyContent='end'>
-                <NextLink href='/cart'>
+                <NextLink href='/cart?p=/checkout/summary'>
                   <Link underline='always' component='span'>
                     Editar
                   </Link>
