@@ -1,8 +1,9 @@
 import { useContext, useState } from 'react';
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import NextLink from 'next/link';
+import { GetServerSideProps } from 'next';
+import { getSession, signIn } from 'next-auth/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
+import NextLink from 'next/link';
 import { AuthLayout } from '@/components/layouts';
 import {
   Box,
@@ -15,7 +16,6 @@ import {
 } from '@mui/material';
 import { ErrorOutline } from '@mui/icons-material';
 import { validations } from '@/utils';
-import { tesloApi } from '@/api';
 import { AuthContext } from '@/context';
 
 interface FormData {
@@ -51,7 +51,8 @@ const RegisterPage = () => {
       return;
     }
 
-    router.replace('/');
+    // router.replace('/');
+    await signIn('credentials', { email, password });
     reset();
   };
 
@@ -159,5 +160,25 @@ const RegisterPage = () => {
     </AuthLayout>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+  const session = await getSession({ req });
+  const { p = '/' } = query;
+
+  if(session) {
+    return {
+      redirect: {
+        destination: p.toString(),
+        permanent: false,
+      }
+    }
+  }
+
+  return {
+    props: {
+      
+    }
+  }
+}
 
 export default RegisterPage;

@@ -1,8 +1,16 @@
-import { useContext, useState } from 'react';
-import NextLink from 'next/link';
+import { useEffect, useState } from 'react';
+import { GetServerSideProps } from 'next';
+import {
+  getSession,
+  signIn,
+  getProviders,
+  LiteralUnion,
+  ClientSafeProvider,
+} from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { AuthLayout } from '@/components/layouts';
+import NextLink from 'next/link';
 import {
   Box,
   Button,
@@ -11,10 +19,11 @@ import {
   Typography,
   Link,
   Chip,
+  Divider,
 } from '@mui/material';
 import { ErrorOutline } from '@mui/icons-material';
-import { AuthContext } from '@/context';
 import { validations } from '@/utils';
+import { BuiltInProviderType } from 'next-auth/providers';
 
 interface FormData {
   email: string;
@@ -24,7 +33,17 @@ interface FormData {
 const LoginPage = () => {
   const router = useRouter();
   const [showError, setShowError] = useState(false);
-  const { loginUser } = useContext(AuthContext);
+  const [providers, setProviders] = useState<Record<
+    LiteralUnion<BuiltInProviderType, string>,
+    ClientSafeProvider
+  > | null>(null);
+
+  useEffect(() => {
+    getProviders().then((prov) => {
+      setProviders(prov);
+    });
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -34,16 +53,20 @@ const LoginPage = () => {
 
   const onSubmit: SubmitHandler<FormData> = async ({ email, password }) => {
     setShowError(false);
-    const isValidLogin = await loginUser(email, password);
+    // const isValidLogin = await loginUser(email, password);
 
-    if (!isValidLogin) {
-      setShowError(true);
-      setTimeout(() => setShowError(false), 3000);
-      return;
-    }
+    // if (!isValidLogin) {
+    //   setShowError(true);
+    //   setTimeout(() => setShowError(false), 3000);
+    //   return;
+    // }
 
-    const destination = router.query.p?.toString() || '/';
-    router.replace(destination);
+    // const destination = router.query.p?.toString() || '/';
+    // router.replace(destination);
+    await signIn('credentials', {
+      email,
+      password,
+    });
     reset();
   };
 
@@ -121,18 +144,72 @@ const LoginPage = () => {
               </Button>
             </Grid>
 
-            <Grid item xs={12} display='flex' justifyContent='center'>
-              <NextLink href={router.query.p ? `/auth/register?p=${router.query.p}` : '/auth/register'}>
+            <Grid
+              item
+              xs={12}
+              display='flex'
+              flexDirection='column'
+              justifyContent='center'
+            >
+              <NextLink
+                href={
+                  router.query.p
+                    ? `/auth/register?p=${router.query.p}`
+                    : '/auth/register'
+                }
+              >
                 <Link component='span' underline='always'>
                   ¿No tienes cuenta?
                 </Link>
               </NextLink>
+            </Grid>
+
+            <Grid item xs={12} display='flex' flexDirection='column' justifyContent='end'>
+              <Divider sx={{ width: '100%', mb: 2 }} />
+              {providers &&
+                Object.values(providers).map((provider) => {
+                  if(provider.id === 'credentials') return (<div key='credentials'></div>)
+
+                  return (
+                    <Button
+                      key={provider.id}
+                      variant='outlined'
+                      fullWidth
+                      color='primary'
+                      sx={{ mb: 1 }}
+                      onClick={() => signIn(provider.id)}
+                    >
+                      {provider.name}
+                    </Button>
+                  );
+                })}
             </Grid>
           </Grid>
         </Box>
       </form>
     </AuthLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  const session = await getSession({ req });
+  const { p = '/' } = query;
+
+  if (session) {
+    return {
+      redirect: {
+        destination: p.toString(),
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default LoginPage;
